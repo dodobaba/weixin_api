@@ -16,9 +16,9 @@ var Weixin = function() {
 Weixin.prototype.checkSignature = function(req) {    		
 	
 	// 获取校验参数
-	this.signature = req.query.signature,
-	this.timestamp = req.query.timestamp,
-	this.nonce = req.query.nonce,
+	this.signature = req.query.signature;
+	this.timestamp = req.query.timestamp;
+	this.nonce = req.query.nonce;
 	this.echostr = req.query.echostr;
 	
 	// 按照字典排序
@@ -51,6 +51,14 @@ Weixin.prototype.imageMsg = function(callback) {
 	emitter.on("weixinImageMsg", callback);
 	
 	return this;
+}
+
+// 监听语音消息
+Weixin.prototype.voiceMsg = function(callback) {
+  
+  emitter.on("weixinVoiceMsg", callback);
+  
+  return this;
 }
 
 // 监听地理位置消息
@@ -94,7 +102,7 @@ Weixin.prototype.parseTextMsg = function() {
 		"createTime" : this.data.CreateTime[0],
 		"msgType" : this.data.MsgType[0],
 		"content" : this.data.Content[0],
-		"msgId" : this.data.MsgId[0],
+		"msgId" : this.data.MsgId[0]
 	}
 	
 	emitter.emit("weixinTextMsg", msg);
@@ -118,12 +126,43 @@ Weixin.prototype.parseImageMsg = function() {
 		"createTime" : this.data.CreateTime[0],
 		"msgType" : this.data.MsgType[0],
 		"picUrl" : this.data.PicUrl[0],
-		"msgId" : this.data.MsgId[0],
+		"msgId" : this.data.MsgId[0]
 	}
 	
 	emitter.emit("weixinImageMsg", msg);
 	
 	return this;
+}
+
+/*
+ * 事件消息格式：
+ * ToUserName 开发者微信号
+ * FromUserName  发送方帐号（一个OpenID）
+ * CreateTime  消息创建时间 （整型）
+ * MsgType   voice
+ * MediaId 语音消息媒体id，可以调用多媒体文件下载接口拉取数据。
+ * Format 语音格式，如amr，speex等
+ * MsgID 消息id，64位整型
+ */
+Weixin.prototype.parseVoiceMsg = function() {
+  var eventKey = '';
+  if (this.data.EventKey) {
+    eventKey = this.data.EventKey[0];
+  }
+  
+  var msg = {
+    "toUserName" : this.data.ToUserName[0],
+    "fromUserName" : this.data.FromUserName[0],
+    "createTime" : this.data.CreateTime[0],
+    "msgType" : this.data.MsgType[0],
+    "mediaId" : this.data.MediaId[0],
+    "format" : this.data.Format[0],
+    "msgId" : this.data.MsgId[0]
+  }
+  
+  emitter.emit("weixinVoiceMsg", msg);
+  
+  return this;
 }
 
 /*
@@ -148,7 +187,7 @@ Weixin.prototype.parseLocationMsg = function(data) {
 		"locationY" : this.data.Location_Y[0],
 		"scale" : this.data.Scale[0],
 		"label" : this.data.Label[0],
-		"msgId" : this.data.MsgId[0],
+		"msgId" : this.data.MsgId[0]
 	}
 	
 	emitter.emit("weixinLocationMsg", msg);
@@ -176,7 +215,7 @@ Weixin.prototype.parseLinkMsg = function() {
 		"title" : this.data.Title[0],
 		"description" : this.data.Description[0],
 		"url" : this.data.Url[0],
-		"msgId" : this.data.MsgId[0],
+		"msgId" : this.data.MsgId[0]
 	}
 	
 	emitter.emit("weixinUrlMsg", msg);
@@ -307,11 +346,15 @@ Weixin.prototype.parse = function() {
 		case 'text' : 
 			this.parseTextMsg();
 			break;
-			
+
 		case 'image' : 
 			this.parseImageMsg();
 			break;
-			
+
+    case 'voice' : 
+      this.parseVoiceMsg();
+      break;
+
 		case 'location' : 
 			this.parseLocationMsg();
 			break;
