@@ -345,33 +345,32 @@ Weixin.prototype.sendMsg = function(msg) {
 }
 
 // Loop
-Weixin.prototype.loop = function(req, res) {	
+Weixin.prototype.loop = function(req, res) {
 	// 保存res
 	this.res = res;
-	
-	var self = this;
-	
-    // 获取XML内容
-    var buf = '';
-    req.setEncoding('utf8');
-    req.on('data', function(chunk) { 
-		buf += chunk;
+
+	var self = this,
+    buf = '';
+
+  // 获取XML内容
+  req.setEncoding('utf8');
+  req.on('data', function(chunk) {
+    buf += chunk;
 	});
-	
+
 	// 内容接收完毕
-    req.on('end', function() {
-		xml2js.parseString(buf, function(err, json) {
-			if (err) {
-                err.status = 400;
-            } else {
-                req.body = json;
-            }
-        });
-		
-		self.data = req.body.xml;
-				
-		self.parse();
+  req.on('end', function() {
+    xml2js.parseString(buf, function(err, json) {
+      if (err) {
+        err.status = 400;
+      } else {
+        req.body = json;
+      }
     });
+
+    self.data = req.body.xml;
+    self.parse();
+  });
 }
 
 module.exports = new Weixin();
