@@ -22,10 +22,7 @@ Express
 如果你需要使用express开发微信公众平台应用，那么首先安装express
 ```bash
   npm install express -g
-```
-bodyparser已经不和Express绑定在一起了，而需要单独来安装，执行如下命令即可：
-```
-npm install body-parser -g
+  npm install express-generator -g
 ```
 
 创建应用
