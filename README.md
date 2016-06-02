@@ -23,6 +23,10 @@ Express
 ```bash
   npm install express -g
 ```
+bodyparser已经不和Express绑定在一起了，而需要单独来安装，执行如下命令即可：
+```
+npm install body-parser -g
+```
 
 创建应用
 ```bash
@@ -40,7 +44,8 @@ Express
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "3.1.1",
+    "body-parser": "~1.13.2",
+    "express": "~4.13.1",
     "jade": "*",
     "xml2js" : "0.2.6",
     "weixin-api" : ">=0.1.6"
@@ -70,10 +75,11 @@ Example
 ```javascript
 var express = require('express'),
   weixin = require('weixin-api'),
-  app = express();
-
-// 解析器
-app.use(express.bodyParser());
+  app = express(),
+  bodyParser = require('body-parser');
+  
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(xmlBodyParser);
 
 // 接入验证
