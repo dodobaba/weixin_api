@@ -30,7 +30,7 @@ Express
   express myweixin
 ```
 
-`cd myweixin`修改`package.json`，添加对`weixin-api`的依赖
+`cd myweixin`修改`package.json`，添加对`weixin-api`和`body-parser`的依赖
 
 ```javascript
 {
