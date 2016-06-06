@@ -22,6 +22,7 @@ Express
 如果你需要使用express开发微信公众平台应用，那么首先安装express
 ```bash
   npm install express -g
+  npm install express-generator -g
 ```
 
 创建应用
@@ -29,7 +30,7 @@ Express
   express myweixin
 ```
 
-`cd myweixin`修改`package.json`，添加对`weixin-api`的依赖
+`cd myweixin`修改`package.json`，添加对`weixin-api`和`body-parser`的依赖
 
 ```javascript
 {
@@ -40,7 +41,8 @@ Express
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "3.1.1",
+    "body-parser": "~1.13.2",
+    "express": "~4.13.1",
     "jade": "*",
     "xml2js" : "0.2.6",
     "weixin-api" : ">=0.1.6"
@@ -70,10 +72,11 @@ Example
 ```javascript
 var express = require('express'),
   weixin = require('weixin-api'),
-  app = express();
-
-// 解析器
-app.use(express.bodyParser());
+  app = express(),
+  bodyParser = require('body-parser');
+  
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(xmlBodyParser);
 
 // 接入验证
